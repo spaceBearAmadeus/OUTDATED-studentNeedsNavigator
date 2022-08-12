@@ -1,7 +1,5 @@
 import psycopg2
-from sqlQueries import SqlQuery
 import connectionDetails as cd
-from newStudents import Student
 
 #IN HERE, PUT VANILLA SQL COMMANDS AS METHODS
 class dbConnector:
@@ -27,7 +25,6 @@ class dbConnector:
         #    if self is super():
         #        print("Vanilla SQL Query initiated!")
         #self.conn.close()
-
 
 #IN HERE, PUT POSTGRES SPECIFIC COMMANDS AS METHODS
 class PostgresConnector(dbConnector):
@@ -55,6 +52,27 @@ class PostgresConnector(dbConnector):
         str_store = psycopg2.Binary(string)
         print(f"An object capable of holding: {string} has been created!")
         return str_store
+    
+class SqlQuery:
+    def create_new_student_table_query(self, new_table_name):
+        create_new_student_table = f'''CREATE TABLE IF NOT EXISTS {new_table_name} (
+                                  name varchar(40) PRIMARY KEY,
+                                  instrument varchar(40) NOT NULL,
+                                  lesson_time int,
+                                  day_of_study varchar(40),
+                                  age int,
+                                  keyword_comments varchar(100),
+                                  status float)'''
+        return create_new_student_table
+    
+    def new_insert_student_query(self, table_name_to_be_inserted_into):
+        insert_new_student0822 = f'''INSERT INTO {table_name_to_be_inserted_into} (name, instrument, lesson_time, day_of_study, age, keyword_comments, status) VALUES (%s, %s, %s, %s, %s, %s, %s)'''
+        return insert_new_student0822
+    
+    
+    def create_index(self, index_name, table, col):
+        new_index = f'''CREATE INDEX {index_name} on {table} ({col})'''
+        return new_index
     
     
         
