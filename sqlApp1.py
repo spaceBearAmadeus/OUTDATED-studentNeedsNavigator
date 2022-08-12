@@ -1,6 +1,7 @@
 import psycopg2
-import sqlQueries as sq 
+from sqlQueries import SqlQuery
 import connectionDetails as cd
+from newStudents import Student
 
 #IN HERE, PUT VANILLA SQL COMMANDS AS METHODS
 class dbConnector:
@@ -10,97 +11,87 @@ class dbConnector:
         self.user = user 
         self.password = password
         self.port = port 
-        self.cur = self.create_connection()
         
     def create_connection(self):
-        self.conn = psycopg2.connect(host=self.host,
-                                dbname=self.dbname,
-                                user=self.user,
-                                password=self.password,
-                                port=self.port)
-        self.cur = self.conn.cursor()
-        self.conn.commit()
-        try:
-            pass 
-        except:
-            if self is super():
-                print("Vanilla Database connecter initiated and cursor created!!!")
-        finally:
-            return self.cur and self.conn 
+        return None
     
-    def execute_sql(self, sql_query):
-        self.cur.execute(sql_query)
+    def close_connection(self):
+        return None 
+                
+    def execute_sql(self, sql_query, item):
+        self.cur.execute(sql_query, item)
         self.conn.commit()
-        try:
-            pass
-        except:
-            if self is super():
-                print("Vanilla SQL Query initiated!")
+        #try:
+        #    pass
+        #except:
+        #    if self is super():
+        #        print("Vanilla SQL Query initiated!")
         #self.conn.close()
-        
-    def new_student_table_query(self, new_table_name):
-        create_new_student_table = f'''CREATE TABLE {new_table_name} (
-                                  name varchar(40) PRIMARY KEY,
-                                  instrument varchar(40) NOT NULL,
-                                  lesson_time int,
-                                  day_of_study varchar(40),
-                                  age int,
-                                  keyword_comments varchar(100),
-                                  status int)'''
-        return create_new_student_table
-        
 
 
 #IN HERE, PUT POSTGRES SPECIFIC COMMANDS AS METHODS
 class PostgresConnector(dbConnector):
     def __init__(self, host, dbname, user, password, port):
         super().__init__(host, dbname, user, password, port)
-        #self.conn = self.create_postgres_connection()
+        self.conn = self.create_connection()
+        self.cur = self.conn.cursor()
         
-    def create_postgres_connection(self):
-        self.conn = super().create_connection()
-        print("Postgres Connection and Cursor Established!")
+    def create_connection(self):
+        self.conn = psycopg2.connect(host=self.host,
+                                     dbname=self.dbname,
+                                     user=self.user,
+                                     password=self.password,
+                                     port=self.port)
+        self.cur = self.conn.cursor()
+        self.conn.commit()
         return self.conn
     
-    def close_postgres_connection(self):
+    def close_connection(self):
         self.conn.close()
         self.cur.close()
         print("Postgres connection and cursor closed!!!!")
         
-    def execute_pg(self, pg_query):
-        self.cur.execute(pg_query)
-        self.conn.commit()
-        print("Postgres command executed!")
-        #self.conn.close()
-        
-    def create_index(self, index_name, table, col):
-        conn = self.create_postgres_connection()
-        self.cur.execute(super().execute_sql(f'''CREATE INDEX {index_name} on {table} ({col})'''))
-        conn.commit()
-          
-    def store_binary(string):
+    def store_binary(self, string):
         str_store = psycopg2.Binary(string)
         print(f"An object capable of holding: {string} has been created!")
         return str_store
-        
     
-
-
+    
+        
+#object used for login and execute_sql
 db_connect = dbConnector(cd.hostname,
                          cd.db_name,
                          cd.username,
                          cd.pwd,
                          cd.port_id)
 
+#object used for postgres connection, and close connection(has execute sql in it)
 pg_connector = PostgresConnector(db_connect.host,
                                  db_connect.dbname,
                                  db_connect.user,
                                  db_connect.password,
                                  db_connect.port)
 
+#object used to generate strings that are sql queries
+sq = SqlQuery()
 
-pg_connector.create_postgres_connection()
+#create postgress connection
+pg_connector.create_connection()
 
-#new_table = pg_connector.new_student_table_query('Students_0822')
-#pg_connector.execute_pg(pg_query=new_table)
-#pg_connector.execute_sql(sql_query=new_table)
+#generate string that is a create new table query (with drop)
+new_table = sq.create_new_student_table_query('Students_0822')
+#use parent method to execute the string
+pg_connector.execute_sql(new_table, item=None)
+
+#generate string that is an insert query with arg as the table u are inserting into
+new_row = sq.new_insert_student_query('Students_0822')
+#new batch of inputs
+new_student_batch1 = [('Mason Miller', 'guitar', 300, 'T', 8, 'creative, personable', 4.5),
+                      ('Emma Miller', 'piano', 330, 't', 6, 'creative, redirection', 3)]
+
+#iterate over this list and execute each one
+for student in new_student_batch1:
+    pg_connector.execute_sql(sql_query=new_row, item=student)
+
+#close pg connection
+pg_connector.close_connection()
