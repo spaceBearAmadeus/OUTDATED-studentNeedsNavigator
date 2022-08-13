@@ -1,2 +1,3 @@
 # studentNeedsNavigator
- A simple tool that allows you to create , view, and track student needs with Python and SQLite3
+
+A simple tool that allows you to create , view, and track student needs using Python, psycopg2, and PostgresSQL
