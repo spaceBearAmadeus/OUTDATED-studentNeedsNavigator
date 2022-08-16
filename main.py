@@ -47,7 +47,7 @@ class Student(Base):
     #this is a class that inherits from the base instance of declarative_base()...
     #...it is a holder of attributes that pertains to a TABLE...declarative base is a TABLE CREATOR!
     #this method represents these params as *args, **kwargs!!
-    __tablename__="Students_Summer_2022", 
+    __tablename__= "students_summer_2022"
     name = Column(String(25), primary_key=True)
     instrument = Column(String(25), nullable=False)
     contact_info = Column(String(40))

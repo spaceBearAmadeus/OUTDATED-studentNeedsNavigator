@@ -1,25 +1,27 @@
-from main import Student, Session, engine, Base 
+from main_scratch import Student, Session, engine, Base 
+import newStudents as ns 
+import pandas as pd
 '''######################################################'''
 
 
 """#this autocreates a table based on the params"""
-Base.metadata.create_all(engine)
+#Base.metadata.create_all(engine)
 
 """#use sqlalchemy to connect to postgres and add student info"""
 local_session = Session(bind=engine)
 
 """#new batch to be inserted"""
 new_student_batch1 = [
-                      ('Cal Moffe', 'piano', 'cell', 600, 'W', 60, 'driven, perceptive', 5),
-                      ('Mason Miller', 'guitar', 'contact thru store', 300, 'T', 8, 'creative, personable', 4.5),
-                      ('Emma Miller', 'piano', 'contact thru store', 330, 'T', 6, 'creative, redirection', 3)
+                      ('Cfal Moffe', 'piano', 'cell', 600, 'W', 60, 'driven, perceptive', 5),
+                      ('Masosdfn Miller', 'guitar', 'contact thru store', 300, 'T', 8, 'creative, personable', 4.5),
+                      ('Emsdfma Miller', 'piano', 'contact thru store', 330, 'T', 6, 'creative, redirection', 3)
                       ]  
 
 """#empty container for user input and quick transport"""
 batch_container = []
 
 """#Navigator class for extra functionality for batch inserts!"""
-class Navigator(Student):
+class Navigator(local_session):
     #method for batch inserting that iterates over batch list
     def batch_insert(self,  batch_info):
         for name, instrument, contact, time, day, age, keywords, favorability in batch_info:
@@ -47,12 +49,17 @@ class Navigator(Student):
 """#critical child used to traverse client user actions..inherits StudentsFall2022 which also inherits declarative_base()"""
 nav = Navigator()
 
+"""#connection generated from main"""
+CONNECTION = 'postgresql://postgres:07141989@localhost:5432/User_Students_Master_2022'
+
 """HARDCODED BATCH MIXED WITH USER INPUT FOR DB INSERT"""
 #user prompted to ADD a new entry to batch that already has data inside
 #nav.add_new_row_to_batch(batch=new_student_batch1)
 #batch insert into db
 #nav.batch_insert(batch_info=new_student_batch1)
 
+#local_session.add(new_student_batch1)
+#local_session.commit()
 """
 IF YOU DO NOT HAVE EVERY FEATURE REQUIRED FOR BATCH INSERT, 
 USE THE METHOD BELOW TO INDIVIDUALLY ADD STUDENT WITH n FEATURES
@@ -68,3 +75,7 @@ USE THE METHOD BELOW TO INDIVIDUALLY ADD STUDENT WITH n FEATURES
 #nav.add_new_row_to_batch(batch=batch_container)
 #nav.batch_insert(batch_info=batch_container)
 
+"""USE THIS STATEMENT IN A FUNC TO EXPORT A CSV OF SQL INFO INTO PREPROCESSOR AND AI!"""
+#df = pd.read_sql("SELECT * FROM students_summer_2022", con=CONNECTION)
+#'postgresql:///User_Students_Master_2022'
+#print(df)
