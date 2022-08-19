@@ -3,9 +3,7 @@ import connectionDetails as cd
 from sqlalchemy.orm import declarative_base, sessionmaker
 from sqlalchemy import Column, String, DateTime, Integer, Float, create_engine 
 from datetime import datetime
-import os 
 '''#######################################################'''
-
 
 '''#method used to create an f string containing the sqlalchemy conn string
     required to connect to postgress via sqlalchemy.create_engine()'''
@@ -47,7 +45,9 @@ class Student(Base):
     #this is a class that inherits from the base instance of declarative_base()...
     #...it is a holder of attributes that pertains to a TABLE...declarative base is a TABLE CREATOR!
     #this method represents these params as *args, **kwargs!!
-    __tablename__= "students_summer_2022"
+    #db should be monthly and new table weekly!  __tablename__will be updated weekly!
+    #format will be students_monthdayyear
+    __tablename__= "students_08142022"
     name = Column(String(25), primary_key=True)
     instrument = Column(String(25), nullable=False)
     contact_info = Column(String(40))
@@ -60,6 +60,15 @@ class Student(Base):
     
     def __repr__(self):
         return f"<Student: {self.name}, {self.instrument}, {self.contact_info}, {self.lesson_time}, {self.day_of_study}, {self.age}, {self.date_entered}, {self.keyword_comments}, {self.status}>"
+
+'''Journal IS USED FOR KEEPING NOTES :)'''
+class Journal(Base):
+    '''#to be updated weekly on Sunday!
+       format is as such MMDDYY...
+       ...insync with students db'''
+    __tablename__ = "august_14_22"
+    entry = Column(String())
+    entry_date = Column(DateTime(), default=datetime.utcnow, primary_key=True)
 
 '''#instantiate sessionmaker'''
 Session = sessionmaker(engine)

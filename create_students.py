@@ -1,27 +1,26 @@
-from main_scratch import Student, Session, engine, Base 
-import newStudents as ns 
+from main import Student, Session, engine, Base 
 import pandas as pd
 '''######################################################'''
 
 
 """#this autocreates a table based on the params"""
-#Base.metadata.create_all(engine)
+Base.metadata.create_all(engine)
 
 """#use sqlalchemy to connect to postgres and add student info"""
 local_session = Session(bind=engine)
 
 """#new batch to be inserted"""
 new_student_batch1 = [
-                      ('Cfal Moffe', 'piano', 'cell', 600, 'W', 60, 'driven, perceptive', 5),
-                      ('Masosdfn Miller', 'guitar', 'contact thru store', 300, 'T', 8, 'creative, personable', 4.5),
-                      ('Emsdfma Miller', 'piano', 'contact thru store', 330, 'T', 6, 'creative, redirection', 3)
+                      ('Cal Moffe', 'piano', 'cell', 600, 'W', 60, 'driven, perceptive', 5),
+                      ('Mason Miller', 'guitar', 'contact thru store', 300, 'T', 8, 'creative, personable', 4.5),
+                      ('Emma Miller', 'piano', 'contact thru store', 330, 'T', 6, 'creative, redirection', 3)
                       ]  
 
 """#empty container for user input and quick transport"""
 batch_container = []
 
 """#Navigator class for extra functionality for batch inserts!"""
-class Navigator(local_session):
+class Navigator():
     #method for batch inserting that iterates over batch list
     def batch_insert(self,  batch_info):
         for name, instrument, contact, time, day, age, keywords, favorability in batch_info:
@@ -50,13 +49,13 @@ class Navigator(local_session):
 nav = Navigator()
 
 """#connection generated from main"""
-CONNECTION = 'postgresql://postgres:07141989@localhost:5432/User_Students_Master_2022'
+CONNECTION = 'postgresql://postgres:07141989@localhost:5432/students_august_2022'
 
 """HARDCODED BATCH MIXED WITH USER INPUT FOR DB INSERT"""
 #user prompted to ADD a new entry to batch that already has data inside
-#nav.add_new_row_to_batch(batch=new_student_batch1)
+nav.add_new_row_to_batch(batch=new_student_batch1)
 #batch insert into db
-#nav.batch_insert(batch_info=new_student_batch1)
+nav.batch_insert(batch_info=new_student_batch1)
 
 #local_session.add(new_student_batch1)
 #local_session.commit()
@@ -64,11 +63,13 @@ CONNECTION = 'postgresql://postgres:07141989@localhost:5432/User_Students_Master
 IF YOU DO NOT HAVE EVERY FEATURE REQUIRED FOR BATCH INSERT, 
 USE THE METHOD BELOW TO INDIVIDUALLY ADD STUDENT WITH n FEATURES
 """
-#new_student = Student(name='Marian C', instrument='piano', keyword_comments='driven, planning, loyal')
-#local_session.add(new_student)
-#local_session.commit()
+new_student1 = Student(name='Marian C', instrument='piano', keyword_comments='driven, planning, loyal', status=4.5)
+local_session.add(new_student1)
+local_session.commit()
 
-
+new_student2 = Student(name='Isabella', instrument='piano', keyword_comments='personable, helpful, perceptive', status=3.5)
+local_session.add(new_student2)
+local_session.commit()
 """MULTIPLE USER INPUTS INTO EMPTY BATCH CONTAINER PER BATCH INSERT"""
 #chain user being prompted for new info
 #nav.add_new_row_to_batch(batch=batch_container)
